@@ -1,28 +1,28 @@
-const express = require('express');
-const path = require('path');
+import express from "express";
+import cors from "cors";
+import { evaluate } from "mathjs";
+
 const app = express();
 
-// Middleware
+app.use(cors());
 app.use(express.json());
 
-// API routes
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-// Serve static files from dist folder
-// Use process.cwd() to get repo root on Render
-const distPath = path.join(process.cwd(), 'dist');
-console.log('Serving static files from:', distPath);
-
-app.use(express.static(distPath));
-
-// For all other routes, serve index.html (SPA support)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+app.post("/api/solve", (req, res) => {
+  try {
+    const { expression } = req.body;
+    const result = evaluate(expression);
+    res.json({ result });
+  } catch {
+    res.status(400).json({ error: "Invalid expression" });
+  }
 });
 
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
