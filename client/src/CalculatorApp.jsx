@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
+const API_URL = "https://calculator-backend-94eo.onrender.com";
+
 function App() {
   const [display, setDisplay] = useState('0')
   const [previousValue, setPreviousValue] = useState(null)
@@ -25,7 +27,7 @@ function App() {
 
   const checkApiHealth = async () => {
     try {
-      const res = await fetch('/api/health')
+      const res = await fetch(`${API_URL}/api/health`)
       const data = await res.json()
       setApiStatus(data.status === 'ok' ? 'connected' : 'error')
     } catch {
@@ -171,10 +173,10 @@ function App() {
     setSmartResult(null)
 
     try {
-      const response = await fetch('/api/solve', {
+      const response = await fetch(`${API_URL}/api/solve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: smartQuery })
+        body: JSON.stringify({ expression: smartQuery })
       })
 
       const data = await response.json()
